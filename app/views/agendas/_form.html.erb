@@ -1,27 +1,32 @@
-<%= form_with(model: agenda) do |form| %>
-  <% if agenda.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(agenda.errors.count, "error") %> prohibited this agenda from being saved:</h2>
 
-      <ul>
-        <% agenda.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<%= simple_form_for(@agenda) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
 
-  <div>
-    <%= form.label :professional_id, style: "display: block" %>
-    <%= form.text_field :professional_id %>
+  <div class="form-inputs">
+    <%= f.association :professional %>
+    <%= f.input :place_name %>
   </div>
 
-  <div>
-    <%= form.label :place_name, style: "display: block" %>
-    <%= form.text_field :place_name %>
+  <div data-controller="nested-form" data-nested-form-wrapper-selector-value=".nested-form-wrapper">
+    <template data-nested-form-target="template">
+      <%= f.simple_fields_for :agenda_slots, AgendaSlot.new, child_index: 'NEW_RECORD' do |slot_fields| %>
+        <%= render "slot_form", f: slot_fields %>
+      <% end %>
+    </template>
+
+    <%= f.simple_fields_for :agenda_slots do |slot_fields| %>
+      <%= render "slot_form", f: slot_fields %>
+    <% end %>
+
+    <div data-nested-form-target="target"></div>
+
+    <button type="button" class="btn btn-secondary" data-action="nested-form#add">
+      New Appointment
+    </button>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="form-actions">
+    <%= f.button :submit %>
   </div>
 <% end %>

@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_17_222017) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_17_224534) do
+  create_table "agenda_slots", force: :cascade do |t|
+    t.integer "agenda_id", null: false
+    t.date "date"
+    t.time "start"
+    t.time "finish"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agenda_id"], name: "index_agenda_slots_on_agenda_id"
+  end
+
   create_table "agendas", force: :cascade do |t|
     t.integer "professional_id", null: false
     t.string "place_name"
@@ -26,5 +36,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_17_222017) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "agenda_slots", "agendas"
   add_foreign_key "agendas", "professionals"
 end
